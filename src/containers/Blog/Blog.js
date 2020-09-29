@@ -1,65 +1,27 @@
 import React, {Component} from 'react';
+import { Route, Link } from 'react-router-dom';
+
 import axios from 'axios';
-
-
-import Post from '../../components/Post/Post';
-import FullPost from '../../components/FullPost/FullPost';
-import NewPost from '../../components/NewPost/NewPost';
+import Posts from './Posts/Posts';
 import './Blog.css';
+import NewPost from './NewPost/NewPost';
 
 
 class Blog extends Component{
-    state = {
-        posts: [],
-        selectedId: null,
-        error: false
-    }
-    componentDidMount () {
-        axios.get('/posts/')
-        .then(response => {
-            this.setState({posts: response.data.slice(0,4)});
-            const updatedPosts = this.state.posts.map(post =>{
-                    return {
-                        ...post,
-                        'author': 'Max'
-                    }});
-            this.setState({posts: updatedPosts});
-            //console.log(response);
-        })
-        .catch(error => {
-           // console.log(error)
-            this.setState({error: true})
-        });
-    }
-    postSelectHandler = (id) => {
-        this.setState({selectedId: id});
-    }
-
     render(){
-        let posts = <p>Something went wrong</p>;
-        if (!this.state.error){
-            posts = this.state.posts.map(post =>{
-                return <Post title={post.title}
-                        key={post.id} 
-                        author={post.author} 
-                        clicked={() =>this.postSelectHandler(post.id)} />;
-            });
-        }
-
         return(
-            <div>
-                <section className="Posts">
-                    {posts}
-                </section>
-                <section>
-                    <FullPost id={this.state.selectedId} />
-                </section>
-                <section>
-                    <NewPost />
-                </section>
-
+            <div className="Blog">
+                <header>
+                    <nav>
+                        <ul>
+                            <li><Link to="/">Home</Link></li>
+                            <li><Link to="/new-post">New Post</Link></li>
+                        </ul>
+                    </nav>
+                </header>
+                <Route path="/" exact component={Posts}/>
+                <Route path="/new-post" exact component={NewPost}/>
             </div>
-
         );
     }
 }
